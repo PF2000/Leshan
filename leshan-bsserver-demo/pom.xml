@@ -95,11 +95,12 @@ Contributors:
                   </execution>
                 </executions>
             </plugin>
-            <plugin>
+             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
                 <artifactId>replacer</artifactId>
                 <executions>
                     <execution>
+                        <phase>package</phase>
                         <goals>
                             <goal>replace</goal>
                         </goals>

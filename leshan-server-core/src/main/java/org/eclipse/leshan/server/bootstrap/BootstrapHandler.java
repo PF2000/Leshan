@@ -17,6 +17,10 @@ package org.eclipse.leshan.server.bootstrap;
 
 import static org.eclipse.leshan.server.bootstrap.BootstrapFailureCause.*;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -70,7 +74,7 @@ public class BootstrapHandler {
         this.store = store;
         this.sender = sender;
         this.sessionManager = sessionManager;
-        this.e = Executors.newFixedThreadPool(5);
+        this.e = Executors.newFixedThreadPool(5);   
     }
 
     protected BootstrapHandler(BootstrapStore store, LwM2mBootstrapRequestSender sender,
@@ -83,14 +87,30 @@ public class BootstrapHandler {
 
     public BootstrapResponse bootstrap(Identity sender, BootstrapRequest request) {
         String endpoint = request.getEndpointName();
+        String secAuth = request.getSecAuthName();
 
         // Start session, checking the BS credentials
-        final BootstrapSession session = this.sessionManager.begin(endpoint, sender);
+        final BootstrapSession session = this.sessionManager.begin(endpoint,secAuth, sender);
 
         if (!session.isAuthorized()) {
             this.sessionManager.failed(session, UNAUTHORIZED, null);
             return BootstrapResponse.badRequest("Unauthorized");
         }
+        
+        boolean isAuth = false;
+        try {
+        	isAuth = sendGet(endpoint,secAuth);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        if(!isAuth) {
+        	LOG.debug("No Auth for {}", endpoint, secAuth);
+            this.sessionManager.failed(session, UNAUTHORIZED, null);
+        	return BootstrapResponse.badRequest("Unauthorized SecAuth");
+        }
+        
 
         // Get the desired bootstrap config for the endpoint
         final BootstrapConfig cfg = store.getBootstrap(endpoint);
@@ -268,4 +288,41 @@ public class BootstrapHandler {
 
         return new LwM2mObjectInstance(instanceId, resources);
     }
+
+    private boolean sendGet(String endpoint, String secAuth) throws Exception {
+
+		String url = "http://localhost:3000/mngm?ep="+endpoint+"&secId=" + secAuth;
+		
+		URL obj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+		// optional default is GET
+		con.setRequestMethod("GET");
+
+		//add request header
+		//con.setRequestProperty("User-Agent", USER_AGENT);
+
+		int responseCode = con.getResponseCode();
+		System.out.println("\nSending 'GET' request to URL : " + url);
+		System.out.println("Response Code : " + responseCode);
+
+		BufferedReader in = new BufferedReader(
+		        new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+
+		//print result
+		System.out.println(response.toString());
+		if(response.toString().equals("true") ) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+    
 }

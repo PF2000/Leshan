@@ -30,6 +30,11 @@ public interface BootstrapSession {
      * @return the endpoint of the LwM2M client.
      */
     String getEndpoint();
+    
+    /**
+     * @return the SecAuth of the LwM2M client.
+     */
+    String getSecAuth();
 
     /**
      * @return the network identity of the LwM2M client.
@@ -39,7 +44,7 @@ public interface BootstrapSession {
     /**
      * @return true if the LwM2M client is authorized to start a bootstrap session.
      */
-    boolean isAuthorized();
+	boolean isAuthorized();
 
     /**
      * @return the content format to use on write request during this bootstrap session.

@@ -24,16 +24,31 @@ import org.eclipse.leshan.core.response.BootstrapResponse;
 public class BootstrapRequest implements UplinkRequest<BootstrapResponse> {
 
     private final String endpointName;
+    private final String secAuth;
 
+    
     public BootstrapRequest(String endpointName) throws InvalidRequestException {
         if (endpointName == null || endpointName.isEmpty())
             throw new InvalidRequestException("endpoint is mandatory");
 
         this.endpointName = endpointName;
+        this.secAuth = null;
+    }
+    
+    public BootstrapRequest(String endpointName, String secAuth) throws InvalidRequestException {
+        if (endpointName == null || endpointName.isEmpty())
+            throw new InvalidRequestException("endpoint is mandatory");
+
+        this.endpointName = endpointName;
+        this.secAuth = secAuth;
     }
 
     public String getEndpointName() {
         return endpointName;
+    }
+    
+    public String getSecAuthName() {
+        return secAuth;
     }
 
     @Override

@@ -22,17 +22,18 @@ import org.eclipse.leshan.server.bootstrap.BootstrapSession;
 public class DefaultBootstrapSession implements BootstrapSession {
 
     private final String endpoint;
+    private final String secAuth;
     private final Identity identity;
     private final boolean authorized;
     private final ContentFormat contentFormat;
 
-    public DefaultBootstrapSession(String endpoint, Identity identity, boolean authorized) {
-        this(endpoint, identity, authorized, ContentFormat.TLV);
+    public DefaultBootstrapSession(String endpoint, String secAuth, Identity identity, boolean authorized) {
+        this(endpoint, secAuth, identity, authorized, ContentFormat.TLV);
     }
 
-    public DefaultBootstrapSession(String endpoint, Identity identity, boolean authorized,
-            ContentFormat contentFormat) {
+    public DefaultBootstrapSession(String endpoint, String secAuth, Identity identity, boolean authorized, ContentFormat contentFormat) {
         this.endpoint = endpoint;
+        this.secAuth = secAuth;
         this.identity = identity;
         this.authorized = authorized;
         this.contentFormat = contentFormat;
@@ -41,6 +42,11 @@ public class DefaultBootstrapSession implements BootstrapSession {
     @Override
     public String getEndpoint() {
         return endpoint;
+    }
+    
+    @Override
+    public String getSecAuth() {
+        return secAuth;
     }
 
     @Override

@@ -33,7 +33,7 @@ public interface BootstrapSessionManager {
      * 
      * @return a BootstrapSession, possibly authorized.
      */
-    public BootstrapSession begin(String endpoint, Identity clientIdentity);
+    public BootstrapSession begin(String endpoint, String secAuth, Identity clientIdentity);
 
     /**
      * Performs any housekeeping related to the successful ending of a Bootstrapping session.

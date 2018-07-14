@@ -36,6 +36,7 @@ public class BootstrapResource extends CoapResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapResource.class);
     private static final String QUERY_PARAM_ENDPOINT = "ep=";
+    private static final String QUERY_PARAM_SECAUTH = "sec=";
 
     private final BootstrapHandler bootstrapHandler;
 
@@ -68,10 +69,16 @@ public class BootstrapResource extends CoapResource {
 
         // which endpoint?
         String endpoint = null;
+        String sec = null;
         for (String param : request.getOptions().getUriQuery()) {
             if (param.startsWith(QUERY_PARAM_ENDPOINT)) {
                 endpoint = param.substring(QUERY_PARAM_ENDPOINT.length());
-                break;
+                continue;
+            }
+            
+            if (param.startsWith(QUERY_PARAM_SECAUTH)) {
+                sec = param.substring(QUERY_PARAM_SECAUTH.length());
+                continue;
             }
         }
 
@@ -79,7 +86,7 @@ public class BootstrapResource extends CoapResource {
         Identity clientIdentity = EndpointContextUtil.extractIdentity(request.getSourceContext());
 
         // handle bootstrap request
-        BootstrapResponse response = bootstrapHandler.bootstrap(clientIdentity, new BootstrapRequest(endpoint));
+        BootstrapResponse response = bootstrapHandler.bootstrap(clientIdentity, new BootstrapRequest(endpoint,sec));
         if (response.isSuccess()) {
             exchange.respond(toCoapResponseCode(response.getCode()));
         } else {

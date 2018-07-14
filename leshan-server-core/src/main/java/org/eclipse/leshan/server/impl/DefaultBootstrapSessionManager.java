@@ -44,7 +44,7 @@ public class DefaultBootstrapSessionManager implements BootstrapSessionManager {
     }
 
     @Override
-    public BootstrapSession begin(String endpoint, Identity clientIdentity) {
+    public BootstrapSession begin(String endpoint, String secAuth, Identity clientIdentity) {
         boolean authorized;
         if (bsSecurityStore != null) {
             List<SecurityInfo> securityInfos = bsSecurityStore.getAllByEndpoint(endpoint);
@@ -53,7 +53,7 @@ public class DefaultBootstrapSessionManager implements BootstrapSessionManager {
             authorized = true;
         }
 
-        return new DefaultBootstrapSession(endpoint, clientIdentity, authorized);
+        return new DefaultBootstrapSession(endpoint, secAuth, clientIdentity, authorized);
     }
 
     @Override

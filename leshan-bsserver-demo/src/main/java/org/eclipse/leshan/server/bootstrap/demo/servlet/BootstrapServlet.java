@@ -16,9 +16,14 @@
 
 package org.eclipse.leshan.server.bootstrap.demo.servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
@@ -69,7 +74,9 @@ public class BootstrapServlet extends HttpServlet {
 
     public BootstrapServlet(BootstrapStoreImpl bsStore) {
         this.bsStore = bsStore;
-
+        
+        //IsAuthenticated();
+        
         this.gson = new GsonBuilder().registerTypeHierarchyAdapter(Byte.class, new SignedByteUnsignedByteAdapter())
                 .create();
     }
@@ -151,4 +158,26 @@ public class BootstrapServlet extends HttpServlet {
         if (errorMessage != null)
             resp.getOutputStream().write(errorMessage.getBytes(StandardCharsets.UTF_8));
     }
+    
+    private boolean IsAuthenticated() {
+    	String urlString = "http://localhost:3000/mngm?secId=value1";
+
+    	URLConnection conn;
+		try {
+	    
+			URL url = new URL(urlString);			
+			conn = url.openConnection();
+			InputStream is = conn.getInputStream();	
+		
+		} 
+		catch (Exception e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return false;
+    }
+   
+    
 }
